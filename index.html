@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memorama STEM: Mujeres en Ciencia</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a237e, #4a148c);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        header {
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            color: #ffeb3b;
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            color: #e1bee7;
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 700px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .instructions p {
+            margin: 10px 0;
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto 25px;
+            font-size: 1.2rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 12px 25px;
+            border-radius: 50px;
+        }
+        
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            height: 150px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .card-front {
+            background: linear-gradient(45deg, #7b1fa2, #e91e63);
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .card-back {
+            background: white;
+            color: #333;
+            transform: rotateY(180deg);
+            overflow: hidden;
+            padding: 10px;
+            flex-direction: column;
+        }
+        
+        .card-back img {
+            width: 80px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;  /* Esto hace que la imagen cubra el espacio manteniendo proporciones */
+            margin-bottom: 10px;
+            border: 2px solid #7b1fa2;
+        }
+        
+        .card-back h3 {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            color: #7b1fa2;
+        }
+        
+        .card-back p {
+            font-size: 0.7rem;
+            line-height: 1.2;
+        }
+        
+        .controls {
+            margin: 30px 0;
+        }
+        
+        button {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        button:hover {
+            background: #ff5722;
+            transform: translateY(-3px);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 15px;
+            padding: 30px;
+            color: #333;
+            position: relative;
+            animation: modalAppear 0.5s ease-out;
+        }
+        
+        @keyframes modalAppear {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .modal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #7b1fa2;
+            margin-right: 20px;
+        }
+        
+        .modal-header h2 {
+            color: #7b1fa2;
+            font-size: 1.8rem;
+        }
+        
+        .modal-body p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #7b1fa2;
+            background: none;
+            border: none;
+            padding: 5px;
+        }
+        
+        .win-message {
+            font-size: 2rem;
+            color: #ff9800;
+            margin: 20px 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .game-board {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .card {
+                height: 120px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MEMORAMA STEM</h1>
+            <div class="subtitle">Descubre a las mujeres que cambiaron la ciencia</div>
+        </header>
+        
+        <div class="instructions">
+            <p>¡Bienvenidas al encuentro de niñas STEM! Encuentra los pares de cartas para descubrir la historia de mujeres extraordinarias en ciencia y tecnología.</p>
+            <p><strong>Instrucciones:</strong> Haz clic en las cartas para voltearlas. Encuentra dos cartas iguales para formar un par y aprender sobre estas increíbles científicas.</p>
+        </div>
+        
+        <div class="game-info">
+            <div class="moves">Movimientos: <span id="moves-count">0</span></div>
+            <div class="pairs">Pares encontrados: <span id="pairs-count">0</span>/5</div>
+        </div>
+        
+        <div class="win-message" id="win-message">
+            ¡Felicidades! Has descubierto a todas las científicas.
+        </div>
+        
+        <div class="game-board" id="game-board"></div>
+        
+        <div class="controls">
+            <button id="reset-btn">Reiniciar Juego</button>
+        </div>
+    </div>
+    
+    <div class="modal" id="scientist-modal">
+        <div class="modal-content">
+            <button class="close-modal" id="close-modal">&times;</button>
+            <div class="modal-header">
+                <img id="modal-image" src="" alt="Científica">
+                <h2 id="modal-name"></h2>
+            </div>
+            <div class="modal-body">
+                <p id="modal-description"></p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Datos de las mujeres destacadas en STEM
+        const scientists = [
+            {
+                name: "Marie Curie",
+                description: "Pionera en el campo de la radiactividad, primera persona en recibir dos premios Nobel en distintas especialidades (Física y Química). Descubrió el polonio y el radio, y desarrolló técnicas para el aislamiento de isótopos radiactivos.",
+                field: "Física y Química",
+                image: "images/marie_curie.jpg"
+            },
+            {
+                name: "Katherine Johnson",
+                description: "Matemática afroamericana cuyos cálculos de la NASA fueron críticos para el éxito de los primeros vuelos espaciales tripulados de Estados Unidos. Calculó la trayectoria para el vuelo de Alan Shepard, el primer estadounidense en el espacio.",
+                field: "Matemáticas",
+                image:"images/katherine_johnson.jpg"
+            },
+            {
+                name: "Ada Lovelace",
+                description: "Matemática y escritora británica, conocida por su trabajo en la máquina analítica de Charles Babbage. Se le considera la primera programadora de computadoras al escribir el primer algoritmo destinado a ser procesado por una máquina.",
+                field: "Computación",
+                image:"images/ada_lovelace.jpeg"
+            },
+            {
+                name: "Jane Goodall",
+                description: "Primatóloga y antropóloga que revolucionó el estudio de los chimpancés al descubrir que fabrican y usan herramientas. Su trabajo cambió para siempre nuestra comprensión de la relación entre humanos y animales.",
+                field: "Primatología",
+                image:"images/jane_goodall.jpeg"
+            },
+            {
+                name: "Mae Jemison",
+                description: "Ingeniera, médica y astronauta de la NASA. Primera mujer afroamericana en viajar al espacio en 1992 a bordo del transbordador espacial Endeavour. Ha trabajado en investigación médica y promueve la educación científica.",
+                field: "Astronáutica",
+                image:"images/mae_jemison.jpg"
+            }
+        ];
+
+        // Variables del juego
+        let cards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let moves = 0;
+        let gameBoard = document.getElementById('game-board');
+        let movesCount = document.getElementById('moves-count');
+        let pairsCount = document.getElementById('pairs-count');
+        let winMessage = document.getElementById('win-message');
+        let resetBtn = document.getElementById('reset-btn');
+        let scientistModal = document.getElementById('scientist-modal');
+        let modalName = document.getElementById('modal-name');
+        let modalDescription = document.getElementById('modal-description');
+        let modalImage = document.getElementById('modal-image');
+        let closeModal = document.getElementById('close-modal');
+
+        // Función para inicializar el juego
+        function initGame() {
+            // Crear un array con todas las cartas (duplicado para los pares)
+            cards = [];
+            scientists.forEach((scientist, index) => {
+                cards.push({...scientist, id: index});
+                cards.push({...scientist, id: index});
+            });
+            
+            // Barajar las cartas
+            shuffleCards();
+            
+            // Limpiar el tablero
+            gameBoard.innerHTML = '';
+            
+            // Crear las cartas en el tablero
+            cards.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.classList.add('card');
+                cardElement.dataset.index = index;
+                
+                cardElement.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-front">?</div>
+                        <div class="card-back">
+                            <img src="${card.image}" alt="${card.name}">
+                            <h3>${card.name}</h3>
+                            <p>${card.field}</p>
+                        </div>
+                    </div>
+                `;
+                
+                cardElement.addEventListener('click', flipCard);
+                gameBoard.appendChild(cardElement);
+            });
+            
+            // Reiniciar variables
+            flippedCards = [];
+            matchedPairs = 0;
+            moves = 0;
+            movesCount.textContent = moves;
+            pairsCount.textContent = matchedPairs;
+            winMessage.style.display = 'none';
+        }
+
+        // Función para barajar las cartas (algoritmo de Fisher-Yates)
+        function shuffleCards() {
+            for (let i = cards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cards[i], cards[j]] = [cards[j], cards[i]];
+            }
+        }
+
+        // Función para voltear una carta
+        function flipCard() {
+            const cardIndex = parseInt(this.dataset.index);
+            const card = cards[cardIndex];
+            const cardElement = this;
+            
+            // Si la carta ya está volteada o emparejada, no hace nada
+            if (cardElement.classList.contains('flipped') || flippedCards.length === 2) {
+                return;
+            }
+            
+            // Voltear la carta
+            cardElement.classList.add('flipped');
+            flippedCards.push({card, cardElement});
+            
+            // Si hay dos cartas volteadas, comprobar si son pareja
+            if (flippedCards.length === 2) {
+                moves++;
+                movesCount.textContent = moves;
+                
+                const card1 = flippedCards[0].card;
+                const card2 = flippedCards[1].card;
+                
+                // Si son pareja
+                if (card1.id === card2.id) {
+                    matchedPairs++;
+                    pairsCount.textContent = matchedPairs;
+                    
+                    // Mostrar información de la científica
+                    setTimeout(() => {
+                        showScientistInfo(card1);
+                        flippedCards = [];
+                        
+                        // Comprobar si el juego ha terminado
+                        if (matchedPairs === scientists.length) {
+                            setTimeout(() => {
+                                winMessage.style.display = 'block';
+                            }, 1000);
+                        }
+                    }, 500);
+                } else {
+                    // Si no son pareja, voltear de nuevo después de un tiempo
+                    setTimeout(() => {
+                        flippedCards.forEach(item => {
+                            item.cardElement.classList.remove('flipped');
+                        });
+                        flippedCards = [];
+                    }, 1000);
+                }
+            }
+        }
+
+        // Función para mostrar información de la científica
+        function showScientistInfo(scientist) {
+            modalName.textContent = scientist.name;
+            modalDescription.textContent = scientist.description;
+            modalImage.src = scientist.image;
+            modalImage.alt = scientist.name;
+            scientistModal.style.display = 'flex';
+        }
+
+        // Event Listeners
+        resetBtn.addEventListener('click', initGame);
+        closeModal.addEventListener('click', () => {
+            scientistModal.style.display = 'none';
+        });
+
+        // Inicializar el juego al cargar
+        window.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
