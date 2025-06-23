@@ -6,263 +6,296 @@
     <title>Memorama STEM: Mujeres en Ciencia</title>
     <style>
         * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #1a237e, #4a148c);
-            color: white;
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .container {
-            max-width: 900px;
-            width: 100%;
-            text-align: center;
-        }
-        
-        header {
-            margin-bottom: 30px;
-        }
-        
-        h1 {
-            font-size: 2.8rem;
-            margin-bottom: 15px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            color: #ffeb3b;
-        }
-        
-        .subtitle {
-            font-size: 1.4rem;
-            margin-bottom: 25px;
-            color: #e1bee7;
-        }
-        
-        .instructions {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 20px;
-            margin: 20px auto;
-            max-width: 700px;
-            font-size: 1.1rem;
-            line-height: 1.6;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .instructions p {
-            margin: 10px 0;
-        }
-        
-        .game-info {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 700px;
-            margin: 0 auto 25px;
-            font-size: 1.2rem;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 12px 25px;
-            border-radius: 50px;
-        }
-        
-        .game-board {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 15px;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-        
-        .card {
-            height: 150px;
-            perspective: 1000px;
-            cursor: pointer;
-        }
-        
-        .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-        }
-        
-        .card.flipped .card-inner {
-            transform: rotateY(180deg);
-        }
-        
-        .card-front, .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        
-        .card-front {
-            background: linear-gradient(45deg, #7b1fa2, #e91e63);
-            font-size: 3rem;
-            color: rgba(255, 255, 255, 0.8);
-        }
-        
-        .card-back {
-            background: white;
-            color: #333;
-            transform: rotateY(180deg);
-            overflow: hidden;
-            padding: 10px;
-            flex-direction: column;
-        }
-        
-        .card-back img {
-            width: 80px;
-            height: 90px;
-            border-radius: 50%;
-            object-fit: cover;  /* Esto hace que la imagen cubra el espacio manteniendo proporciones */
-            margin-bottom: 10px;
-            border: 2px solid #7b1fa2;
-        }
-        
-        .card-back h3 {
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-            color: #7b1fa2;
-        }
-        
-        .card-back p {
-            font-size: 0.7rem;
-            line-height: 1.2;
-        }
-        
-        .controls {
-            margin: 30px 0;
-        }
-        
-        button {
-            background: #ff9800;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            font-size: 1.1rem;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: bold;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        
-        button:hover {
-            background: #ff5722;
-            transform: translateY(-3px);
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-content {
-            background: white;
-            width: 90%;
-            max-width: 600px;
-            border-radius: 15px;
-            padding: 30px;
-            color: #333;
-            position: relative;
-            animation: modalAppear 0.5s ease-out;
-        }
-        
-        @keyframes modalAppear {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        
-        .modal-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .modal-header img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #7b1fa2;
-            margin-right: 20px;
-        }
-        
-        .modal-header h2 {
-            color: #7b1fa2;
-            font-size: 1.8rem;
-        }
-        
-        .modal-body p {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #7b1fa2;
-            background: none;
-            border: none;
-            padding: 5px;
-        }
-        
-        .win-message {
-            font-size: 2rem;
-            color: #ff9800;
-            margin: 20px 0;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            display: none;
-        }
-        
-        @media (max-width: 768px) {
-            .game-board {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .card {
-                height: 120px;
-            }
-            
-            h1 {
-                font-size: 2.2rem;
-            }
-            
-            .subtitle {
-                font-size: 1.1rem;
-            }
-        }
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #1a237e, #4a148c);
+    color: white;
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    max-width: min(900px, 95%);
+    width: 100%;
+    text-align: center;
+}
+
+header {
+    margin-bottom: clamp(20px, 3vw, 30px);
+}
+
+h1 {
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    margin-bottom: clamp(10px, 1.5vw, 15px);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    color: #ffeb3b;
+}
+
+.subtitle {
+    font-size: clamp(1rem, 3vw, 1.4rem);
+    margin-bottom: clamp(15px, 2vw, 25px);
+    color: #e1bee7;
+}
+
+.instructions {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: clamp(15px, 2vw, 20px);
+    margin: clamp(15px, 2vw, 20px) auto;
+    max-width: min(700px, 95%);
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    line-height: 1.6;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.instructions p {
+    margin: clamp(5px, 1vw, 10px) 0;
+}
+
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: min(700px, 95%);
+    margin: 0 auto clamp(15px, 2vw, 25px);
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    background: rgba(0, 0, 0, 0.2);
+    padding: clamp(8px, 1.2vw, 12px) clamp(15px, 2.5vw, 25px);
+    border-radius: 50px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: clamp(8px, 1.5vw, 15px);
+    max-width: min(700px, 95%);
+    margin: 0 auto;
+}
+
+.card {
+    aspect-ratio: 3/4;
+    max-height: clamp(100px, 20vw, 150px);
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.card.flipped .card-inner {
+    transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.card-front {
+    background: linear-gradient(45deg, #7b1fa2, #e91e63);
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.card-back {
+    background: white;
+    color: #333;
+    transform: rotateY(180deg);
+    overflow: hidden;
+    padding: clamp(5px, 1vw, 10px);
+    flex-direction: column;
+}
+
+.card-back img {
+    width: clamp(35px, 8vw, 60px);
+    height: clamp(35px, 8vw, 60px);
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: clamp(3px, 1vw, 10px);
+    border: 2px solid #7b1fa2;
+}
+
+.card-back h3 {
+    font-size: clamp(0.65rem, 2vw, 0.9rem);
+    margin-bottom: clamp(2px, 0.5vw, 5px);
+    color: #7b1fa2;
+}
+
+.card-back p {
+    font-size: clamp(0.55rem, 1.8vw, 0.7rem);
+    line-height: 1.2;
+}
+
+.controls {
+    margin: clamp(20px, 3vw, 30px) 0;
+}
+
+button {
+    background: #ff9800;
+    color: white;
+    border: none;
+    padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 30px);
+    font-size: clamp(1rem, 2.5vw, 1.1rem);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+button:hover {
+    background: #ff5722;
+    transform: translateY(-3px);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(10px, 3vw, 20px);
+}
+
+.modal-content {
+    background: white;
+    width: 100%;
+    max-width: min(600px, 95%);
+    border-radius: 15px;
+    padding: clamp(15px, 4vw, 30px);
+    color: #333;
+    position: relative;
+    animation: modalAppear 0.5s ease-out;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@keyframes modalAppear {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: clamp(10px, 3vw, 20px);
+    flex-direction: column;
+    text-align: center;
+}
+
+.modal-header img {
+    width: clamp(70px, 20vw, 150px);
+    height: clamp(70px, 20vw, 150px);
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #7b1fa2;
+    margin-bottom: clamp(10px, 2vw, 15px);
+}
+
+.modal-header h2 {
+    color: #7b1fa2;
+    font-size: clamp(1.3rem, 4vw, 1.8rem);
+}
+
+.modal-body p {
+    font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+    line-height: 1.6;
+    margin-bottom: clamp(10px, 2vw, 20px);
+    text-align: left;
+}
+
+.close-modal {
+    position: absolute;
+    top: clamp(10px, 1.5vw, 15px);
+    right: clamp(10px, 1.5vw, 15px);
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    cursor: pointer;
+    color: #7b1fa2;
+    background: none;
+    border: none;
+    padding: 5px;
+    font-weight: bold;
+}
+
+.win-message {
+    font-size: clamp(1.3rem, 5vw, 2rem);
+    color: #ff9800;
+    margin: clamp(15px, 3vw, 20px) 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    display: none;
+    padding: clamp(15px, 3vw, 20px);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+}
+
+/* Media Queries para ajustes específicos */
+@media (max-width: 900px) {
+    .game-board {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+    .game-board {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .card {
+        max-height: clamp(90px, 25vw, 130px);
+    }
+}
+
+@media (max-width: 500px) {
+    .game-board {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .game-info {
+        flex-direction: column;
+        align-items: center;
+        border-radius: 12px;
+    }
+}
+
+@media (max-width: 400px) {
+    .card {
+        max-height: clamp(80px, 28vw, 110px);
+    }
+    
+    .card-back {
+        padding: 4px;
+    }
+}
     </style>
 </head>
 <body>
